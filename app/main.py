@@ -3,9 +3,11 @@ main.py
 =======
 Application entry point.
 
-Stage 2: boots the Drive connection and starts the folder watcher. New files
-in 01_RAW_LINKEDIN_EXPORTS are detected and logged. The real ingestion handler
-(parse -> clean -> score -> export -> archive) is plugged in from Stage 3.
+Boots the Drive connection, builds the full processing Pipeline, and starts
+the FolderWatcher pointed at it. From here the system is fully autonomous:
+new files dropped into 01_RAW_LINKEDIN_EXPORTS are downloaded, parsed,
+cleaned, de-duplicated, scored, exported to 02_CLEANED_LEADS, archived to
+03_PROCESSED_LEADS, and audit-logged to 06_LOGS.
 
 Run:
     python -m app.main
@@ -14,20 +16,12 @@ Run:
 import time
 
 from app.drive.drive_client import DriveClient
+from app.drive.file_manager import FileManager
 from app.drive.folder_watcher import FolderWatcher
+from app.pipeline import Pipeline
 from app.logs.logger import get_logger
 
 log = get_logger(__name__)
-
-
-def _placeholder_handler(file: dict) -> None:
-    """
-    Temporary handler used until Stage 3.
-
-    For now we just acknowledge the file. We deliberately do NOT move it yet,
-    so nothing is lost before the parsing pipeline exists.
-    """
-    log.info("Detected (no pipeline yet): %s [%s]", file.get("name"), file.get("id"))
 
 
 def main() -> None:
@@ -36,7 +30,10 @@ def main() -> None:
     log.info("LOBO AI Leads running; connected as %s",
              info.get("user", {}).get("emailAddress"))
 
-    watcher = FolderWatcher(handler=_placeholder_handler, client=client)
+    # Build the pipeline (shares one FileManager/auth session) and watcher.
+    file_manager = FileManager(client=client)
+    pipeline = Pipeline(file_manager=file_manager)
+    watcher = FolderWatcher(handler=pipeline.process_file, client=client)
     watcher.start()
 
     # Keep the process alive so the background scheduler keeps polling.

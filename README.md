@@ -5,8 +5,11 @@ Drive folder for LinkedIn exports, cleans and de-duplicates the leads, scores
 and prioritises them, then writes the results back to Google Drive — **with no
 reliance on local storage**, so it runs cleanly on Railway, Render, or Docker.
 
-> **Build status:** Stage 1 (Google Drive authentication) is complete. Later
-> stages add ingestion, cleaning, scoring, exporting, and archiving.
+> **Build status:** Core pipeline complete (Stages 1–6). Drop a LinkedIn
+> export into `01_RAW_LINKEDIN_EXPORTS` and the system parses, cleans,
+> de-duplicates, scores, exports to `02_CLEANED_LEADS`, archives the raw file
+> to `03_PROCESSED_LEADS`, and writes an audit trail to `06_LOGS` (created
+> automatically). Future work: the `integrations/` connectors.
 
 ---
 
@@ -97,8 +100,24 @@ cp .env.example .env
 python -m scripts.test_connection
 ```
 
-A successful run prints the authenticated service-account email and confirms
-the root folder plus all five subfolders are reachable. If it fails:
+To run the whole system (watch + process continuously):
+
+```bash
+python -m app.main
+```
+
+You can also exercise each stage offline (no Drive needed):
+
+```bash
+python -m scripts.test_parser     # Stage 3: parsing
+python -m scripts.test_cleaning   # Stage 4: normalize/validate/dedupe
+python -m scripts.test_scoring    # Stage 5: scoring/priority
+python -m scripts.test_pipeline   # Stage 6: full pipeline (fake Drive)
+```
+
+A successful connection test prints the authenticated service-account email
+and confirms the root folder plus all five subfolders are reachable. If it
+fails:
 
 | Error | Likely cause |
 |-------|--------------|

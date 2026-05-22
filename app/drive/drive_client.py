@@ -123,6 +123,29 @@ class DriveClient:
             )
         return folder
 
+    def get_or_create_folder(self, name: str, parent_id: str) -> dict:
+        """
+        Find a subfolder by name inside `parent_id`, creating it if absent.
+
+        Used for the audit-log folder, which isn't part of the pre-existing
+        structure. Returns the folder dict {id, name}.
+        """
+        existing = self.find_folder(name, parent_id=parent_id)
+        if existing:
+            return existing
+
+        metadata = {
+            "name": name,
+            "mimeType": MIME_FOLDER,
+            "parents": [parent_id],
+        }
+        folder = (
+            self.service.files()
+            .create(body=metadata, fields="id, name", supportsAllDrives=True)
+            .execute()
+        )
+        return folder
+
     def list_files(self, folder_id: str) -> list[dict]:
         """
         List non-folder files directly inside a folder.
