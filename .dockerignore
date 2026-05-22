@@ -1,0 +1,17 @@
+# Keep secrets and local cruft out of the image
+.env
+secrets/
+*.json
+!*.example.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Dev-only assets not needed at runtime
+scripts/
+.git/
+.gitignore
+README.md

@@ -132,4 +132,29 @@ fails:
 The app is stateless and config-driven, so it deploys cleanly to Railway,
 Render, or any Docker host. Provide credentials via `GOOGLE_SERVICE_ACCOUNT_JSON`
 (env var) or a mounted secret file, and set the folder-name variables from
-`.env.example`. A `dockerfile` is included from a later stage.
+`.env.example`.
+
+### Docker
+```bash
+docker build -f dockerfile -t lobo-ai-leads .
+docker run --rm \
+  -e GOOGLE_SERVICE_ACCOUNT_JSON="$(cat secrets/service_account.json)" \
+  -e DRIVE_ROOT_FOLDER_NAME=LOBO_AI_LEADS \
+  lobo-ai-leads
+```
+Credentials are never baked into the image — pass them at runtime.
+
+### Railway / Render
+- Deploy from the repo; the platform builds the `dockerfile` automatically.
+- Add the env vars from `.env.example` in the dashboard. Use
+  `GOOGLE_SERVICE_ACCOUNT_JSON` (paste the whole JSON) since these hosts favour
+  env vars over mounted files.
+- The process runs `python -m app.main` and polls Drive on `WATCH_INTERVAL_SECONDS`.
+
+## Future integrations
+
+`app/integrations/` contains a shared `LeadIntegration` base class plus stub
+connectors for **Dynamics**, **Google Sheets**, **AI calling**, and **email**.
+Each is disabled (`enabled = False`) and logs intent without sending, so the
+seam exists and is testable. Implement `send_leads()` and flip `enabled` to
+activate one.
