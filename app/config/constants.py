@@ -26,3 +26,44 @@ SUPPORTED_UPLOAD_MIME_TYPES = {
     "csv": "text/csv",
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
+
+# ── Standardized lead schema ────────────────────────────────────────
+# Every processed lead row has exactly these columns, in this order.
+# Parsers map their raw input onto this; later stages fill score/priority.
+LEAD_SCHEMA = [
+    "full_name",
+    "first_name",
+    "last_name",
+    "company",
+    "role",
+    "email",
+    "linkedin_profile",
+    "location",
+    "connection_date",
+    "lead_score",
+    "lead_priority",
+    "notes",
+]
+
+# ── LinkedIn export -> schema column mapping ────────────────────────
+# LinkedIn's "Connections.csv" header names (left) -> our schema (right).
+# Keys are lower-cased + stripped before matching, so casing/whitespace
+# differences across export versions don't break the mapping.
+LINKEDIN_COLUMN_MAP = {
+    "first name": "first_name",
+    "last name": "last_name",
+    "company": "company",
+    "position": "role",
+    "title": "role",                 # some exports call it "Title"
+    "email address": "email",
+    "email": "email",
+    "url": "linkedin_profile",
+    "profile url": "linkedin_profile",
+    "connected on": "connection_date",
+    "location": "location",
+    "notes": "notes",
+}
+
+# Columns we use to recognise the real header row inside a LinkedIn CSV
+# (which often has a few preamble/notes lines above the header).
+LINKEDIN_HEADER_MARKERS = {"first name", "last name", "url", "company"}
