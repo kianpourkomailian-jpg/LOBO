@@ -1,0 +1,17 @@
+# ── Core data handling ──────────────────────────────────────────────
+pandas==2.2.2            # tabular lead data: parsing, cleaning, dedupe
+openpyxl==3.1.5          # lets pandas read/write .xlsx LinkedIn exports
+
+# ── Google Drive access ─────────────────────────────────────────────
+google-api-python-client==2.137.0   # the Drive v3 REST client
+google-auth==2.32.0                 # service-account credential loading
+google-auth-httplib2==0.2.0         # transport glue for the client above
+
+# ── Scheduling (used from Stage 2 onward by the folder watcher) ─────
+APScheduler==3.10.4      # runs the "check for new files" job on a timer
+
+# ── Configuration ───────────────────────────────────────────────────
+python-dotenv==1.0.1     # loads settings from a .env file into os.environ
+
+# ── Fuzzy matching (used in the dedupe stage later) ─────────────────
+rapidfuzz==3.9.6         # fast fuzzy string comparison for duplicate leads
