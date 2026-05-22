@@ -67,3 +67,55 @@ LINKEDIN_COLUMN_MAP = {
 # Columns we use to recognise the real header row inside a LinkedIn CSV
 # (which often has a few preamble/notes lines above the header).
 LINKEDIN_HEADER_MARKERS = {"first name", "last name", "url", "company"}
+
+# ── Lead scoring rules (edit these to retune scoring) ───────────────
+# All matching is done on lower-cased text, so keep entries lower-case.
+#
+# Each category contributes points toward a lead's score (capped at 100).
+# The WEIGHTS below control how many points each kind of match is worth,
+# making the model easy to retune without touching the scoring code.
+
+# Exact-ish job titles that are prime targets (matched as substrings of role).
+HIGH_VALUE_ROLES = [
+    "maintenance manager",
+    "engineering manager",
+    "operations manager",
+    "plant manager",
+    "maintenance supervisor",
+    "director of operations",
+    "head of engineering",
+]
+
+# Industries we prioritise — matched against company + role text.
+HIGH_VALUE_INDUSTRIES = [
+    "manufacturing",
+    "industrial",
+    "engineering",
+    "utilities",
+    "logistics",
+    "food production",
+]
+
+# Decision-maker signals — seniority/function keywords in the role.
+DECISION_MAKER_KEYWORDS = [
+    "manager",
+    "director",
+    "head of",
+    "supervisor",
+    "operations",
+    "engineering",
+]
+
+# Points awarded per match type. Tune freely.
+SCORING_WEIGHTS = {
+    "high_value_role": 50,        # one-off bonus if any high-value role matches
+    "industry": 15,              # per matched industry keyword
+    "decision_maker_keyword": 10,  # per matched decision-maker keyword
+}
+
+# Score thresholds -> priority bucket (checked high to low).
+PRIORITY_THRESHOLDS = {
+    "HIGH": 70,
+    "MEDIUM": 40,
+    # anything below MEDIUM is LOW
+}
