@@ -15,3 +15,6 @@ python-dotenv==1.0.1     # loads settings from a .env file into os.environ
 
 # ── Fuzzy matching (used in the dedupe stage later) ─────────────────
 rapidfuzz==3.9.6         # fast fuzzy string comparison for duplicate leads
+
+# ── Anthropic SDK (free-text lead extraction for 07_RAW_DUMP) ───────
+anthropic==0.74.0        # Claude API client used by dump_parser

@@ -22,7 +22,7 @@ which already isolates handler failures so the loop keeps running.
 
 from app.config import settings
 from app.drive.file_manager import FileManager
-from app.ingestion import linkedin_parser
+from app.ingestion import linkedin_parser, dump_parser
 from app.cleaning import normalize, validators, dedupe
 from app.scoring import lead_scoring, priority_engine
 from app.exports.upload_cleaned import upload_cleaned
@@ -30,6 +30,17 @@ from app.logs.audit import AuditLogger
 from app.logs.logger import get_logger
 
 log = get_logger(__name__)
+
+
+def _parse_by_extension(name: str, buffer):
+    """Pick the right parser based on file extension.
+
+    .txt/.md  -> the free-text dump extractor (Claude-backed).
+    others    -> the LinkedIn parser (handles ZIP/CSV/XLSX itself).
+    """
+    if name.lower().endswith((".txt", ".md")):
+        return dump_parser.parse_dump(name, buffer)
+    return linkedin_parser.parse(name, buffer)
 
 
 class Pipeline:
@@ -50,7 +61,7 @@ class Pipeline:
 
         # 2) Parse into the standardized schema. On failure: audit + bail.
         try:
-            parsed = linkedin_parser.parse(name, buffer)
+            parsed = _parse_by_extension(name, buffer)
         except Exception as exc:  # noqa: BLE001
             log.exception("Parsing failed for %s", name)
             self.audit.log_run(name, counts={"parsed": 0},

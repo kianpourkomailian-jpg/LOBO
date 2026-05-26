@@ -38,11 +38,22 @@ FileHandler = Callable[[dict], None]
 
 
 class FolderWatcher:
-    """Polls the raw-exports folder and dispatches new files to a handler."""
+    """Polls a Drive folder and dispatches new files to a handler.
 
-    def __init__(self, handler: FileHandler, client: DriveClient | None = None):
+    Defaults to the LinkedIn raw-exports folder; pass `folder_name` to point
+    it at a different folder (e.g. 07_RAW_DUMP) so one process can watch
+    multiple inboxes by spinning up multiple watchers.
+    """
+
+    def __init__(
+        self,
+        handler: FileHandler,
+        client: DriveClient | None = None,
+        folder_name: str | None = None,
+    ):
         self.handler = handler
         self.client = client or DriveClient()
+        self.folder_name = folder_name or settings.DRIVE_RAW_FOLDER
         # Files we've already dispatched in this process lifetime.
         self._seen_ids: set[str] = set()
         self._scheduler = BackgroundScheduler()
@@ -52,9 +63,13 @@ class FolderWatcher:
     # ------------------------------------------------------------------
     @staticmethod
     def _is_supported(file: dict) -> bool:
-        """Accept by extension OR by Drive MIME type (ZIP / CSV / XLSX)."""
+        """Accept by extension OR by Drive MIME type.
+
+        Supported: ZIP / CSV / XLSX (LinkedIn exports) and TXT / MD (free-text
+        dumps for the 07_RAW_DUMP folder).
+        """
         name = file.get("name", "").lower()
-        if name.endswith((".zip", ".csv", ".xlsx")):
+        if name.endswith((".zip", ".csv", ".xlsx", ".txt", ".md")):
             return True
         return file.get("mimeType") in SUPPORTED_UPLOAD_MIME_TYPES.values()
 
@@ -68,8 +83,8 @@ class FolderWatcher:
         Any exception from the handler is caught and logged so one bad file
         never kills the whole watcher loop.
         """
-        raw_folder = self.client.get_subfolder(settings.DRIVE_RAW_FOLDER)
-        files = self.client.list_files(raw_folder["id"])
+        folder = self.client.get_subfolder(self.folder_name)
+        files = self.client.list_files(folder["id"])
 
         dispatched = 0
         for file in files:
@@ -97,8 +112,8 @@ class FolderWatcher:
         """Begin polling every WATCH_INTERVAL_SECONDS until the process ends."""
         interval = settings.WATCH_INTERVAL_SECONDS
         log.info(
-            "Watching '%s' every %ss for new exports...",
-            settings.DRIVE_RAW_FOLDER,
+            "Watching '%s' every %ss for new files...",
+            self.folder_name,
             interval,
         )
         self.check_once()  # run immediately on startup, then on schedule

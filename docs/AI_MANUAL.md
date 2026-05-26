@@ -56,7 +56,7 @@ app/
     zip_handler.py             # extract CSV/XLSX from ZIP in memory
     csv_parser.py              # CSV/XLSX readers + header-row detection
     linkedin_parser.py         # LinkedIn columns → LEAD_SCHEMA
-    dump_parser.py             # STUB — 07_RAW_DUMP free-text extraction (not wired)
+    dump_parser.py             # Claude-based free-text lead extraction (07_RAW_DUMP)
   cleaning/
     normalize.py               # trim, case, ISO dates, tidy URLs
     validators.py              # split valid/invalid (with reason)
@@ -136,27 +136,33 @@ Add it to `.env.example`, expose it in `settings.py`, and access it via
 folder IDs anywhere. If the folder should be auto-provisioned on boot,
 add a `get_or_create_folder` call inside `main._ensure_auxiliary_folders`.
 
-### Wire up the dump folder (07_RAW_DUMP)
-This is currently scaffolded but not active. To enable:
+### The dump folder (07_RAW_DUMP) — Claude-based extractor
+Active. Implemented in `app/ingestion/dump_parser.py` using the Anthropic
+SDK. Key facts for anyone touching it:
 
-1. Implement `parse_dump(filename, buffer)` in `app/ingestion/dump_parser.py`
-   so it returns a LEAD_SCHEMA-shaped DataFrame. Strategy options:
-   - Regex/heuristics: extract URLs (`https?://…`), emails, and likely
-     "Name — Company" phrases. Deterministic and free.
-   - LLM extraction: hand the text to Claude with a JSON schema; use the
-     Claude API skill in this repo for caching/cost discipline.
-2. Dispatch on extension in `Pipeline.process_file`:
-   ```python
-   if name.lower().endswith((".txt", ".md")):
-       parsed = dump_parser.parse_dump(name, buffer)
-   else:
-       parsed = linkedin_parser.parse(name, buffer)
-   ```
-3. Extend the watcher to also poll `settings.DRIVE_DUMP_FOLDER`. Either
-   point `FolderWatcher` at multiple folders or run a second watcher
-   instance with the same handler.
-4. Update `FolderWatcher._is_supported` to accept `.txt`/`.md` (or accept
-   anything when the file came from the dump folder).
+* Model: `claude-opus-4-7` via `settings.ANTHROPIC_MODEL`.
+* Structured output: `output_config.format` with a strict `json_schema` —
+  every schema field is required (empty string default) so the model can
+  never return a malformed shape.
+* Prompt caching: the system prompt has `cache_control: {"type":
+  "ephemeral"}` on it. Edits to the system prompt invalidate the cache —
+  if you tweak the instructions, expect the first call to write fresh
+  and subsequent calls to hit `cache_read_input_tokens`.
+* Cost gate: returns an empty schema-shaped frame and logs a warning if
+  `ANTHROPIC_API_KEY` is unset. The rest of the pipeline tolerates that.
+* Effort: `medium`. Extraction is structured; `high` would burn tokens
+  with no measurable quality gain.
+* Input cap: `_MAX_INPUT_CHARS = 50_000`. Larger files are truncated
+  with a warning.
+* Dispatch: `Pipeline._parse_by_extension` routes `.txt`/`.md` here;
+  everything else still goes through `linkedin_parser`.
+* Watching: a second `FolderWatcher` in `main.py` polls
+  `settings.DRIVE_DUMP_FOLDER` with the same `pipeline.process_file`
+  handler.
+
+When tuning extraction quality, the *prompt* is the lever — not the
+model or temperature (Opus 4.7 doesn't accept `temperature`). If you
+need a different model, change `ANTHROPIC_MODEL`, not the code.
 
 ## 6. Testing
 

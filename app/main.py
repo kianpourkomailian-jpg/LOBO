@@ -43,19 +43,34 @@ def main() -> None:
 
     _ensure_auxiliary_folders(client)
 
-    # Build the pipeline (shares one FileManager/auth session) and watcher.
+    # Build the pipeline (shares one FileManager/auth session) and watchers.
+    # One watcher per inbox folder, both pointing at the same pipeline —
+    # the pipeline dispatches to the right parser by file extension.
     file_manager = FileManager(client=client)
     pipeline = Pipeline(file_manager=file_manager)
-    watcher = FolderWatcher(handler=pipeline.process_file, client=client)
-    watcher.start()
+    watchers = [
+        FolderWatcher(
+            handler=pipeline.process_file,
+            client=client,
+            folder_name=settings.DRIVE_RAW_FOLDER,
+        ),
+        FolderWatcher(
+            handler=pipeline.process_file,
+            client=client,
+            folder_name=settings.DRIVE_DUMP_FOLDER,
+        ),
+    ]
+    for w in watchers:
+        w.start()
 
-    # Keep the process alive so the background scheduler keeps polling.
+    # Keep the process alive so the background schedulers keep polling.
     try:
         while True:
             time.sleep(1)
     except (KeyboardInterrupt, SystemExit):
-        log.info("Shutting down watcher...")
-        watcher.stop()
+        log.info("Shutting down watchers...")
+        for w in watchers:
+            w.stop()
 
 
 if __name__ == "__main__":

@@ -62,10 +62,14 @@ Dave Otway — Crepe Cuisine — http://www.crepecuisine.com/
 Met Jane at the trade show, jane@acme.com, maintenance manager.
 ```
 
-**Heads-up:** automatic extraction from these files is *not yet wired
-in* — they currently park in the folder waiting for that step to be
-implemented. Until then, ask the assistant to add specific dumped leads
-to Airtable directly (it can read the dump folder).
+**How it works:** dropped `.txt`/`.md` files are read by Claude, which
+pulls out names, companies, roles, emails, and URLs into the same cleaned
+CSV as everything else. The first file in a batch pays the full Claude
+cost; the rest reuse a cached system prompt at ~10% of that.
+
+**Requires:** an Anthropic API key in `.env` (see `ANTHROPIC_API_KEY`). If
+the key isn't set, dumped files are left in place untouched — nothing is
+lost, and the rest of the pipeline keeps running.
 
 ## 4. How to read the output
 

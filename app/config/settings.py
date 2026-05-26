@@ -52,6 +52,13 @@ WATCH_INTERVAL_SECONDS = int(os.getenv("WATCH_INTERVAL_SECONDS", "60"))
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
 
+# --- Anthropic (free-text dump extraction) --------------------------
+# The dump extractor uses these. ANTHROPIC_API_KEY is read by the SDK
+# directly; we just expose it here for the "is the feature enabled?" check.
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-opus-4-7")
+
+
 def validate() -> None:
     """
     Fail fast with a clear message if credentials are not configured.
