@@ -9,7 +9,9 @@ reliance on local storage**, so it runs cleanly on Railway, Render, or Docker.
 > export into `01_RAW_LINKEDIN_EXPORTS` and the system parses, cleans,
 > de-duplicates, scores, exports to `02_CLEANED_LEADS`, archives the raw file
 > to `03_PROCESSED_LEADS`, and writes an audit trail to `06_LOGS` (created
-> automatically). Future work: the `integrations/` connectors.
+> automatically). A `07_RAW_DUMP` inbox is also auto-created for ad-hoc
+> free-text leads (extraction is stubbed until wired up). Future work:
+> the `integrations/` connectors and the dump-folder extractor.
 
 ---
 

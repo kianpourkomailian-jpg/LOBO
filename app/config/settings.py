@@ -40,6 +40,8 @@ DRIVE_CLEANED_FOLDER = os.getenv("DRIVE_CLEANED_FOLDER", "02_CLEANED_LEADS")
 DRIVE_PROCESSED_FOLDER = os.getenv("DRIVE_PROCESSED_FOLDER", "03_PROCESSED_LEADS")
 DRIVE_CALL_HISTORY_FOLDER = os.getenv("DRIVE_CALL_HISTORY_FOLDER", "04_CALL_HISTORY")
 DRIVE_DONOT_CONTACT_FOLDER = os.getenv("DRIVE_DONOT_CONTACT_FOLDER", "05_DONOT_CONTACT")
+# Free-text inbox for ad-hoc leads. Auto-created on boot. Not yet processed.
+DRIVE_DUMP_FOLDER = os.getenv("DRIVE_DUMP_FOLDER", "07_RAW_DUMP")
 
 # Optional Shared Drive id (blank = normal "My Drive" sharing).
 DRIVE_SHARED_DRIVE_ID = os.getenv("DRIVE_SHARED_DRIVE_ID", "").strip()

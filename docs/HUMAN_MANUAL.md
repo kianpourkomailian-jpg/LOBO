@@ -28,9 +28,11 @@ In Google Drive, inside `LOBO_AI_LEADS/`:
 | `04_CALL_HISTORY` | Reserved for future call-system integration. | (future) |
 | `05_DONOT_CONTACT` | Reserved for the do-not-contact list. | You / future |
 | `06_LOGS` | Audit reports (created automatically on the first run). | The system |
+| `07_RAW_DUMP` | **Ad-hoc lead inbox** — anything that isn't a LinkedIn export. | You |
 
-You only ever need to interact with **`01_RAW_LINKEDIN_EXPORTS`** to add
-work, and **`02_CLEANED_LEADS`** to get results.
+You'll mainly use **`01_RAW_LINKEDIN_EXPORTS`** (for LinkedIn-format
+files), **`07_RAW_DUMP`** (for everything else), and **`02_CLEANED_LEADS`**
+(to get results).
 
 ## 3. How to add leads
 
@@ -48,6 +50,22 @@ is ignored. Save as `.csv` or `.xlsx` and drop it into the same folder.
 
 > **Tip.** You don't need every column filled. Anything blank stays blank.
 > A row is only rejected if it has NO name AND NO company AND NO email.
+
+### Option C — Free-text dump (no spreadsheet at all)
+For one-off leads you scribble down — an email signature, a name + URL, a
+quick note — drop a `.txt`, `.md`, or similar file straight into
+**`07_RAW_DUMP`**. Examples that are fine:
+
+```
+Dave Otway — Crepe Cuisine — http://www.crepecuisine.com/
+
+Met Jane at the trade show, jane@acme.com, maintenance manager.
+```
+
+**Heads-up:** automatic extraction from these files is *not yet wired
+in* — they currently park in the folder waiting for that step to be
+implemented. Until then, ask the assistant to add specific dumped leads
+to Airtable directly (it can read the dump folder).
 
 ## 4. How to read the output
 

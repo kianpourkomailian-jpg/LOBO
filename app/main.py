@@ -15,6 +15,7 @@ Run:
 
 import time
 
+from app.config import settings
 from app.drive.drive_client import DriveClient
 from app.drive.file_manager import FileManager
 from app.drive.folder_watcher import FolderWatcher
@@ -24,11 +25,23 @@ from app.logs.logger import get_logger
 log = get_logger(__name__)
 
 
+def _ensure_auxiliary_folders(client: DriveClient) -> None:
+    """
+    Create folders that aren't part of the pre-existing structure if they're
+    missing — currently 07_RAW_DUMP (ad-hoc free-text inbox). Idempotent.
+    """
+    root = client.get_root_folder()
+    client.get_or_create_folder(settings.DRIVE_DUMP_FOLDER, parent_id=root["id"])
+    log.info("Auxiliary folder ensured: %s", settings.DRIVE_DUMP_FOLDER)
+
+
 def main() -> None:
     client = DriveClient()
     info = client.whoami()
     log.info("LOBO AI Leads running; connected as %s",
              info.get("user", {}).get("emailAddress"))
+
+    _ensure_auxiliary_folders(client)
 
     # Build the pipeline (shares one FileManager/auth session) and watcher.
     file_manager = FileManager(client=client)
