@@ -26,6 +26,7 @@ Warburtons
 Cargill
 Kraft Heinz
 Kerry              # matches "Kerry Foods"
+Premier Foods
 Arla
 Muller
 Dairy Farmers of America
