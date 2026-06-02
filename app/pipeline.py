@@ -23,7 +23,7 @@ which already isolates handler failures so the loop keeps running.
 from app.config import settings
 from app.drive.file_manager import FileManager
 from app.ingestion import linkedin_parser
-from app.cleaning import normalize, validators, dedupe
+from app.cleaning import normalize, validators, suppression, dedupe
 from app.scoring import lead_scoring, priority_engine
 from app.exports.upload_cleaned import upload_cleaned
 from app.logs.audit import AuditLogger
@@ -57,10 +57,13 @@ class Pipeline:
                                parse_error=str(exc))
             return  # leave the raw file in place for inspection
 
-        # 3-6) Clean -> validate -> dedupe -> score -> prioritise.
+        # 3-6) Clean -> validate -> suppress -> dedupe -> score -> prioritise.
+        # Suppression drops leads at companies we already work with (existing
+        # customers / other reps' accounts) before they can reach the output.
         normalized = normalize.normalize(parsed)
         valid, invalid = validators.validate(normalized)
-        unique, duplicates = dedupe.dedupe(valid)
+        kept, suppressed = suppression.suppress(valid)
+        unique, duplicates = dedupe.dedupe(kept)
         scored = lead_scoring.score_leads(unique)
         final = priority_engine.assign_priority(scored)
 
@@ -73,15 +76,16 @@ class Pipeline:
         )
         self.fm.move_file(file_id, processed_folder["id"])
 
-        # 9) Write the audit trail (summary + duplicate/invalid CSVs).
+        # 9) Write the audit trail (summary + duplicate/invalid/suppressed CSVs).
         counts = {
             "parsed": len(parsed),
             "valid": len(valid),
             "invalid": len(invalid),
+            "suppressed": len(suppressed),
             "duplicates": len(duplicates),
             "exported": len(final),
         }
-        self.audit.log_run(name, counts=counts,
-                          duplicates=duplicates, invalid=invalid)
+        self.audit.log_run(name, counts=counts, duplicates=duplicates,
+                          invalid=invalid, suppressed=suppressed)
 
         log.info("Pipeline DONE: %s -> %s", name, counts)

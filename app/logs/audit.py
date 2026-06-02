@@ -5,9 +5,10 @@ Writes a human-readable AUDIT TRAIL for every processed file, straight to
 Google Drive (no local logs — same statelessness rule as the rest).
 
 For each run we upload, into a dynamically-created '06_LOGS' folder:
-  * <ts>_<source>_summary.json  — counts + status for the whole run
+  * <ts>_<source>_summary.json   — counts + status for the whole run
   * <ts>_<source>_duplicates.csv — the duplicate rows skipped (if any)
   * <ts>_<source>_invalid.csv    — the invalid rows dropped (if any)
+  * <ts>_<source>_suppressed.csv — leads dropped as do-not-contact (if any)
 
 The JSON summary is the at-a-glance record; the CSVs let a human inspect
 exactly what was skipped and why. Timestamps (UTC) keep runs ordered and
@@ -56,14 +57,15 @@ class AuditLogger:
         counts: dict,
         duplicates: pd.DataFrame | None = None,
         invalid: pd.DataFrame | None = None,
+        suppressed: pd.DataFrame | None = None,
         parse_error: str | None = None,
     ) -> None:
         """
         Upload the audit artifacts for one processed file.
 
         `counts` is a dict like:
-            {"parsed": 100, "valid": 95, "invalid": 5,
-             "duplicates": 10, "exported": 85}
+            {"parsed": 100, "valid": 95, "invalid": 5, "suppressed": 8,
+             "duplicates": 10, "exported": 77}
         """
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         prefix = f"{ts}_{self._stem(source_filename)}"
@@ -99,6 +101,15 @@ class AuditLogger:
                 folder_id=folder_id,
                 filename=f"{prefix}_invalid.csv",
                 data=invalid.to_csv(index=False).encode("utf-8"),
+                mime_type=SUPPORTED_UPLOAD_MIME_TYPES["csv"],
+            )
+
+        # 4) Suppressed (do-not-contact) rows CSV — only if there were any.
+        if suppressed is not None and not suppressed.empty:
+            self.fm.upload_bytes(
+                folder_id=folder_id,
+                filename=f"{prefix}_suppressed.csv",
+                data=suppressed.to_csv(index=False).encode("utf-8"),
                 mime_type=SUPPORTED_UPLOAD_MIME_TYPES["csv"],
             )
 

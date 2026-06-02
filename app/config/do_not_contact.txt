@@ -1,0 +1,88 @@
+# LOBO — Do-Not-Contact / existing-customer suppression list
+# ===========================================================================
+# Leads whose COMPANY matches any line below are filtered out during cleaning
+# (Stage 4) so they never reach the cleaned leads or the call lists. These are
+# companies we already work with, or accounts owned by another salesperson.
+#
+# How matching works (see app/cleaning/suppression.py):
+#   * case-, accent- and punctuation-insensitive
+#   * generic suffixes (Ltd, Plc, Inc, Group, Company, ...) are ignored
+#   * an entry matches when EVERY word of the entry appears in the company
+#     name, so use the SHORTEST distinctive form:
+#         "Kerry"  matches  Kerry, Kerry Foods, Kerry Group Plc
+#         "Coors"  matches  Molson Coors Beverage Company
+#
+# One company per line. Blank lines and '#' comments (whole-line or inline)
+# are ignored. Add a line any time you win an account; the next import is
+# filtered automatically — no need to clear leads by hand.
+
+# --- Food & Beverage -------------------------------------------------------
+2 Sisters
+Kellogg's
+Mondelez
+Nestle
+PepsiCo
+Warburtons
+Cargill
+Kraft Heinz
+Kerry              # matches "Kerry Foods"
+Arla
+Muller
+Dairy Farmers of America
+Lactalis
+Anheuser-Busch
+Refresco
+Coors              # matches "Molson Coors"
+Heineken
+
+# --- Packaging -------------------------------------------------------------
+Ardagh
+Amcor
+Smurfit
+Sonoco
+
+# --- Industrials / Materials / Energy / Tech -------------------------------
+Samsung
+Polypipe
+Saint-Gobain
+Intel
+Babcock
+Atlas
+E.ON
+Shell
+National Grid
+Avanti
+EDF
+Siemens
+Tarmac
+Ibstock
+Aggregate Industries
+
+# --- Automotive & Aerospace ------------------------------------------------
+Tesla
+Ford
+Rolls-Royce
+JCB
+Caterpillar
+BMW
+Vauxhall
+Nissan
+General Motors
+British Airways
+Boeing
+Airbus
+Leonardo
+
+# --- Logistics / Intralogistics --------------------------------------------
+Amazon
+FedEx
+Vanderlande
+SSI Schaefer
+Ocado
+KNAPP
+Dematic
+
+# --- Pharma ----------------------------------------------------------------
+Pfizer
+Bristol Myers Squibb
+MSD

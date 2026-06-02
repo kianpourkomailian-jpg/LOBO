@@ -45,6 +45,18 @@ DRIVE_DONOT_CONTACT_FOLDER = os.getenv("DRIVE_DONOT_CONTACT_FOLDER", "05_DONOT_C
 DRIVE_SHARED_DRIVE_ID = os.getenv("DRIVE_SHARED_DRIVE_ID", "").strip()
 
 
+# --- Suppression / do-not-contact -----------------------------------
+# Companies we already work with (existing customers, or accounts owned by
+# another salesperson) are filtered out during cleaning so they never reach
+# the call lists. This points at a newline-delimited file of company names;
+# edit that file to add/remove companies. Defaults to the copy shipped beside
+# this module so it works out of the box.
+DO_NOT_CONTACT_FILE = os.getenv(
+    "DO_NOT_CONTACT_FILE",
+    os.path.join(os.path.dirname(__file__), "do_not_contact.txt"),
+)
+
+
 # --- Scheduling / logging -------------------------------------------
 WATCH_INTERVAL_SECONDS = int(os.getenv("WATCH_INTERVAL_SECONDS", "60"))
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()

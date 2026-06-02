@@ -21,6 +21,7 @@ Google Drive
   ↓ Lead Ingestion        (ZIP / CSV / XLSX)
   ↓ LinkedIn Parsing
   ↓ Cleaning + Validation
+  ↓ Suppression           (drop do-not-contact / existing customers)
   ↓ Deduplication
   ↓ Lead Scoring
   ↓ Export Clean Leads    (→ 02_CLEANED_LEADS)
@@ -33,10 +34,10 @@ Google Drive
 ```
 app/
   main.py              # entry point
-  config/              # settings (env-driven) + constants (design-fixed)
+  config/              # settings + constants + do_not_contact.txt (suppression list)
   drive/               # Google Drive auth + client (+ watcher/file_manager later)
   ingestion/           # zip/csv/linkedin parsing (later stages)
-  cleaning/            # normalize / dedupe / validators (later stages)
+  cleaning/            # normalize / validators / suppression / dedupe
   scoring/             # lead scoring + priority engine (later stages)
   exports/             # export + upload cleaned leads (later stages)
   logs/                # logger + audit trail (later stages)
@@ -109,11 +110,42 @@ python -m app.main
 You can also exercise each stage offline (no Drive needed):
 
 ```bash
-python -m scripts.test_parser     # Stage 3: parsing
-python -m scripts.test_cleaning   # Stage 4: normalize/validate/dedupe
-python -m scripts.test_scoring    # Stage 5: scoring/priority
-python -m scripts.test_pipeline   # Stage 6: full pipeline (fake Drive)
+python -m scripts.test_parser      # Stage 3: parsing
+python -m scripts.test_cleaning    # Stage 4: normalize/validate/dedupe
+python -m scripts.test_suppression # do-not-contact / existing-customer filter
+python -m scripts.test_scoring     # Stage 5: scoring/priority
+python -m scripts.test_pipeline    # Stage 6: full pipeline (fake Drive)
 ```
+
+---
+
+## Do-not-contact (existing-customer) suppression
+
+Leads at companies we already work with — existing customers, or accounts
+owned by another salesperson — are filtered out automatically during cleaning
+so they never reach the cleaned leads or the call lists. The list lives in a
+plain-text file you can edit:
+
+```
+app/config/do_not_contact.txt   # one company per line, '#' comments allowed
+```
+
+Add a line any time you win an account; the next import is filtered — no need
+to clear leads by hand. Matching is deliberately forgiving (see
+`app/cleaning/suppression.py`):
+
+- case-, accent- and punctuation-insensitive (`Nestlé` = `nestle`),
+- generic suffixes are ignored (`Ltd`, `Plc`, `Inc`, `Group`, `Company`, …),
+- an entry matches when **every word of the entry** appears in the company, so
+  use the shortest distinctive form:
+  - `Kerry` → matches `Kerry`, `Kerry Foods`, `Kerry Group Plc`
+  - `Coors` → matches `Molson Coors Beverage Company`
+
+Whole-word matching keeps it precise: `Ford` won't match `Bradford`, and
+`SSI Schaefer` won't match the prospect `Schaeffler`. Suppressed rows are
+written to a `<run>_suppressed.csv` in `06_LOGS` (and counted in the run
+summary) so you can always see exactly who was filtered and why. Point
+`DO_NOT_CONTACT_FILE` at a different path to override the default list.
 
 A successful connection test prints the authenticated service-account email
 and confirms the root folder plus all five subfolders are reachable. If it
