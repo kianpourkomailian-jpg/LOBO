@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LOBO × UK Data Centre Boom — Opportunity Deck</title>
+<style>
+  :root{
+    --bg:#070b14; --bg2:#0c1424; --card:#111c30; --card2:#16233b;
+    --line:#21304d; --txt:#e7eefb; --muted:#90a2c0; --dim:#5e7395;
+    --cyan:#22d3ee; --violet:#a855f7; --lime:#a3e635; --amber:#fbbf24; --rose:#fb7185;
+    --grad:linear-gradient(120deg,#22d3ee,#a855f7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 700px at 80% -10%,rgba(168,85,247,.18),transparent 60%),
+      radial-gradient(1000px 600px at -10% 10%,rgba(34,211,238,.16),transparent 55%),var(--bg);
+    color:var(--txt);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  a{color:var(--cyan);text-decoration:none}
+  .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* grid bg */
+  .gridbg{position:fixed;inset:0;z-index:0;opacity:.4;pointer-events:none;
+    background-image:linear-gradient(rgba(80,120,200,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(80,120,200,.06) 1px,transparent 1px);
+    background-size:46px 46px;mask:radial-gradient(1000px 600px at 50% 0%,#000,transparent 80%)}
+  .content{position:relative;z-index:1}
+
+  /* hero */
+  header.hero{padding:70px 0 30px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);border:1px solid var(--line);
+    padding:7px 14px;border-radius:999px;background:rgba(20,35,59,.6)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{font-size:clamp(34px,6vw,62px);line-height:1.04;margin:22px 0 12px;letter-spacing:-.02em;font-weight:800}
+  .sub{color:var(--muted);max-width:680px;margin:0 auto;font-size:clamp(15px,2.2vw,19px)}
+
+  /* kpis */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:46px 0 10px}
+  .kpi{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:18px;padding:22px 18px;text-align:left;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;inset:0;background:var(--grad);opacity:.07}
+  .kpi .num{font-size:clamp(26px,3.4vw,38px);font-weight:800;letter-spacing:-.02em}
+  .kpi .lbl{color:var(--muted);font-size:13px;margin-top:4px}
+
+  section{padding:54px 0;border-top:1px solid rgba(33,48,77,.5)}
+  .kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+  h2{font-size:clamp(24px,3.6vw,36px);margin:8px 0 6px;letter-spacing:-.02em;font-weight:800}
+  .lead{color:var(--muted);max-width:760px}
+
+  /* verdict */
+  .verdict{display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+    background:linear-gradient(120deg,rgba(34,211,238,.12),rgba(168,85,247,.12));
+    border:1px solid var(--line);border-radius:22px;padding:26px 28px}
+  .verdict .badge{font-weight:900;font-size:30px;padding:14px 26px;border-radius:16px;
+    background:var(--grad);color:#06121c;letter-spacing:.04em;white-space:nowrap;box-shadow:0 10px 40px rgba(34,211,238,.25)}
+  .verdict p{margin:0;flex:1;min-width:260px}
+
+  /* pros cons */
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 8px 14px}
+  .pcard h3{display:flex;align-items:center;gap:10px;margin:12px 12px 6px;font-size:17px}
+  .pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
+  .pill.go{background:rgba(163,230,53,.15);color:var(--lime);border:1px solid rgba(163,230,53,.3)}
+  .pill.risk{background:rgba(251,113,133,.13);color:var(--rose);border:1px solid rgba(251,113,133,.3)}
+  .row{display:flex;gap:12px;padding:11px 12px;border-radius:12px;cursor:default;transition:.18s;align-items:flex-start}
+  .row:hover{background:var(--card2);transform:translateX(3px)}
+  .row .ic{flex:none;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:800}
+  .ic.up{background:rgba(163,230,53,.16);color:var(--lime)}
+  .ic.dn{background:rgba(251,113,133,.16);color:var(--rose)}
+  .row b{font-weight:700}
+  .row small{color:var(--muted);display:block;font-size:13px}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 18px}
+  .tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+    color:var(--muted);cursor:pointer;font-size:14px;font-weight:600;transition:.18s}
+  .tab:hover{color:var(--txt);border-color:#33507f}
+  .tab.active{background:var(--grad);color:#06121c;border-color:transparent}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .site{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:.2s;position:relative;overflow:hidden}
+  .site:hover{border-color:#3a5da0;transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.4)}
+  .site h4{margin:0 0 4px;font-size:16px}
+  .site .op{color:var(--cyan);font-size:13px;font-weight:600}
+  .site .meta{color:var(--muted);font-size:13px;margin-top:8px}
+  .tag{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--line);
+    border-radius:999px;padding:3px 9px;margin-top:10px}
+
+  /* companies */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+  .tier .t{font-size:13px;font-weight:800;letter-spacing:.04em;margin-bottom:4px}
+  .tier .d{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:13px;padding:6px 11px;border-radius:10px;background:var(--card2);border:1px solid var(--line)}
+  .tier.a .t{color:var(--lime)} .tier.b .t{color:var(--cyan)} .tier.c .t{color:var(--violet)}
+
+  /* prospects table */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 14px}
+  .controls input{flex:1;min-width:200px;background:var(--card);border:1px solid var(--line);
+    color:var(--txt);padding:11px 14px;border-radius:12px;font-size:14px;outline:none}
+  .controls input:focus{border-color:var(--cyan)}
+  .fbtn{padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+    color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+  .fbtn.active{background:var(--card2);color:var(--txt);border-color:#3a5da0}
+  .fbtn.tA.active{color:var(--lime);border-color:rgba(163,230,53,.4)}
+  .fbtn.tB.active{color:var(--cyan);border-color:rgba(34,211,238,.4)}
+  .fbtn.tC.active{color:var(--violet);border-color:rgba(168,85,247,.4)}
+  .tablewrap{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{text-align:left;padding:13px 16px;background:var(--bg2);color:var(--muted);
+    font-size:12px;letter-spacing:.06em;text-transform:uppercase;position:sticky;top:0}
+  tbody td{padding:12px 16px;border-top:1px solid rgba(33,48,77,.6)}
+  tbody tr{transition:.12s}
+  tbody tr:hover{background:var(--card2)}
+  .ttag{font-size:11px;font-weight:800;padding:3px 9px;border-radius:6px}
+  .ttag.A{background:rgba(163,230,53,.15);color:var(--lime)}
+  .ttag.B{background:rgba(34,211,238,.15);color:var(--cyan)}
+  .ttag.C{background:rgba(168,85,247,.15);color:var(--violet)}
+  .rtag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px;white-space:nowrap}
+  .masked{color:var(--dim)}
+  .count{color:var(--muted);font-size:13px;margin-left:auto}
+
+  /* outreach */
+  .ot{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:6px}
+  .otbody{padding:18px 20px}
+  .otbody .ang{color:var(--muted);font-size:13px;margin-bottom:12px}
+  pre.msg{white-space:pre-wrap;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
+    padding:16px;margin:0;font-family:'JetBrains Mono',monospace;font-size:13px;color:#d7e3f7;line-height:1.6}
+  .subj{font-weight:700;margin:0 0 10px;font-size:15px}
+  .copy{margin-top:12px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card2);color:var(--txt);cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+  .copy:hover{border-color:var(--cyan);color:var(--cyan)}
+
+  /* next */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .step .n{font-size:13px;font-weight:800;color:var(--cyan)}
+  .step h4{margin:8px 0 6px}
+  .step p{color:var(--muted);font-size:14px;margin:0}
+
+  footer{padding:40px 0 60px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid rgba(33,48,77,.5)}
+
+  @media(max-width:820px){.kpis{grid-template-columns:1fr 1fr}.pc{grid-template-columns:1fr}
+    .tiers{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.verdict .badge{font-size:24px}}
+  .reveal{opacity:0;transform:translateY(18px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="gridbg"></div>
+<div class="content">
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow"><span class="dot"></span> LOBO Systems · Opportunity Assessment · Jun 2026</span>
+    <h1>The UK Data Centre Boom<br><span class="grad-text">is a LOBO market.</span></h1>
+    <p class="sub">Modular, no-tools work-at-height access — sold into the most heavily-funded
+      construction wave in Europe. The deep dive, the verdict, the sites, and the people to call.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="num mono" data-to="36.4" data-pre="£" data-suf="bn">£0bn</div><div class="lbl">UK pipeline value</div></div>
+      <div class="kpi"><div class="num mono" data-to="100" data-pre="~" data-suf="">0</div><div class="lbl">Developments planned</div></div>
+      <div class="kpi"><div class="num mono" data-to="8" data-pre="" data-suf="GW">0GW</div><div class="lbl">Early-stage projects 2026</div></div>
+      <div class="kpi"><div class="num mono" data-to="8.4" data-pre="" data-suf="GW">0GW</div><div class="lbl">IT load by 2031</div></div>
+    </div>
+  </header>
+</div>
+
+<section><div class="wrap reveal">
+  <div class="verdict">
+    <div class="badge">GO ✓</div>
+    <p><b style="font-size:18px">Focused beachhead, not a broad push.</b><br>
+      Lead with the <b style="color:var(--lime)">M&amp;E sub-contractors</b> where the labour pain
+      is sharpest. Position LOBO as <b>labour-saving + schedule-compressing + work-at-height-safe</b>
+      vs scaffold/MEWP. Concentrate on <b>Slough / West London, the M4 corridor (South Wales),
+      and Greater Manchester</b>. Prove on 1–2 live projects → case studies → land-and-expand.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">The thesis</div>
+  <h2>Why this fits LOBO</h2>
+  <p class="lead">Data halls are wall-to-wall repetitive overhead work — cable-tray &amp; containment,
+    busbar, overhead power/data cabling, cooling pipework, CRAC/CRAH &amp; ductwork, fire suppression,
+    lighting. The industry is shifting to overhead cable trays — <i>more</i> sustained work-at-height.
+    And it lands in the exact year an acute M&amp;E labour shortage is pushing rates up, making
+    "fewer man-hours" the #1 contractor buying criterion. LOBO is a painkiller, not a vitamin.</p>
+
+  <div class="pc">
+    <div class="pcard">
+      <h3><span class="pill go">STRENGTHS</span> Why it works</h3>
+      <div class="row"><span class="ic up">↑</span><div><b>Funded, protected demand</b><small>~£36.4bn pipeline, now Critical National Infrastructure — visibility to 2030+.</small></div></div>
+      <div class="row"><span class="ic up">↑</span><div><b>Product-problem fit</b><small>Congested halls where modular, no-tools access beats scaffold &amp; MEWP.</small></div></div>
+      <div class="row"><span class="ic up">↑</span><div><b>Perfect timing</b><small>M&amp;E labour shortage makes "fewer man-hours" the deciding factor right now.</small></div></div>
+      <div class="row"><span class="ic up">↑</span><div><b>Recurring revenue</b><small>Operators maintain CRAC, overhead cabling &amp; lighting for the building's whole life.</small></div></div>
+      <div class="row"><span class="ic up">↑</span><div><b>Land-and-expand</b><small>Templated hyperscale buildings repeat across a portfolio — solve access once.</small></div></div>
+      <div class="row"><span class="ic up">↑</span><div><b>Built-in credibility</b><small>Already trusted by NASA, Boeing, nuclear &amp; energy — the risk-averse proof points DCs want.</small></div></div>
+    </div>
+    <div class="pcard">
+      <h3><span class="pill risk">RISKS</span> What to watch</h3>
+      <div class="row"><span class="ic dn">↓</span><div><b>Entrenched incumbents</b><small>Scaffolding firms &amp; MEWP/IPAF hire already on every site — must displace, not just appear.</small></div></div>
+      <div class="row"><span class="ic dn">↓</span><div><b>Long, relationship-led cycles</b><small>Must get designed into temporary-works method statements — a technical sell.</small></div></div>
+      <div class="row"><span class="ic dn">↓</span><div><b>Contractor concentration</b><small>Few high-stakes M&amp;E accounts, slow to switch, hard on terms.</small></div></div>
+      <div class="row"><span class="ic dn">↓</span><div><b>Capital intensity</b><small>Rental-at-scale is working-capital heavy; needs kit + trainers ready fast.</small></div></div>
+      <div class="row"><span class="ic dn">↓</span><div><b>Timing slippage</b><small>Grid/power is the real bottleneck — announced capacity can slip.</small></div></div>
+      <div class="row"><span class="ic dn">↓</span><div><b>CNI security</b><small>High-security sites make demos &amp; trials harder to arrange.</small></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">The targets · sites</div>
+  <h2>Where the cranes are</h2>
+  <div class="tabs" id="siteTabs">
+    <div class="tab active" data-hub="london">Greater London &amp; Slough</div>
+    <div class="tab" data-hub="manc">Manchester &amp; North</div>
+    <div class="tab" data-hub="wales">South Wales (M4)</div>
+  </div>
+  <div class="cards" id="siteCards"></div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">The targets · companies</div>
+  <h2>Three tiers of buyer</h2>
+  <div class="tiers">
+    <div class="tier a">
+      <div class="t">TIER A — M&amp;E SUBS · PRIMARY</div>
+      <div class="d">Sharpest labour pain. The beachhead.</div>
+      <div class="chips">
+        <span class="chip">Mercury</span><span class="chip">Kirby Group</span><span class="chip">Dornan</span>
+        <span class="chip">NG Bailey</span><span class="chip">Designer Group</span><span class="chip">Datalec (DPI)</span>
+        <span class="chip">2bm</span><span class="chip">ROCMEP</span><span class="chip">Crown House</span>
+      </div>
+    </div>
+    <div class="tier b">
+      <div class="t">TIER B — MAIN CONTRACTORS</div>
+      <div class="d">Set temp-works standards &amp; frameworks.</div>
+      <div class="chips">
+        <span class="chip">Mace</span><span class="chip">Skanska UK</span><span class="chip">Laing O'Rourke</span>
+        <span class="chip">Bouygues E&amp;S</span><span class="chip">Winvic</span><span class="chip">Sir Robert McAlpine</span>
+      </div>
+    </div>
+    <div class="tier c">
+      <div class="t">TIER C — OPERATORS</div>
+      <div class="d">Recurring FM + spec influence.</div>
+      <div class="chips">
+        <span class="chip">Equinix</span><span class="chip">Vantage</span><span class="chip">Ark</span>
+        <span class="chip">Yondr</span><span class="chip">Kao Data</span><span class="chip">Pure DC</span>
+        <span class="chip">SEGRO</span><span class="chip">Nscale</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">The targets · people</div>
+  <h2>44 real prospects, pulled live</h2>
+  <p class="lead">Last names masked until enriched. Filter by tier, search by name, company or role.</p>
+  <div class="controls">
+    <button class="fbtn active" data-tier="all">All</button>
+    <button class="fbtn tA" data-tier="A">Tier A · M&amp;E subs</button>
+    <button class="fbtn tB" data-tier="B">Tier B · Main contractors</button>
+    <button class="fbtn tC" data-tier="C">Tier C · Operators</button>
+    <input id="search" placeholder="Search name, company, title…" />
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tier</th><th>Name</th><th>Title</th><th>Company</th><th>Role</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div style="display:flex;margin-top:10px"><span class="count" id="count"></span></div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">The opener</div>
+  <h2>Outreach, by tier</h2>
+  <div class="tabs" id="otTabs">
+    <div class="tab active" data-ot="a">Tier A · M&amp;E subs</div>
+    <div class="tab" data-ot="ehs">EHS · Temp works</div>
+    <div class="tab" data-ot="c">Tier C · Operators</div>
+  </div>
+  <div class="ot"><div class="otbody" id="otBody"></div></div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="kicker">From here</div>
+  <h2>Next moves</h2>
+  <div class="steps">
+    <div class="step"><div class="n">01</div><h4>Enrich the shortlist</h4><p>Reveal full names, verified emails &amp; direct dials — 1 Apollo credit per contact. Start with Tier A (21).</p></div>
+    <div class="step"><div class="n">02</div><h4>Load the pipeline</h4><p>Push <span class="mono">PROSPECTS.csv</span> into the LOBO Drive pipeline / Airtable to score &amp; prioritise.</p></div>
+    <div class="step"><div class="n">03</div><h4>Pilot &amp; prove</h4><p>Win 1–2 named live projects, build the man-hour case study, then expand across the account.</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  Sources: Barbour ABI · Construction News · Construction Enquirer · Nscale · DCD · Capacity ·
+  Apollo.io (prospect data). Prepared for LOBO Systems — internal opportunity assessment.
+</div></footer>
+
+</div>
+
+<script>
+// ---- KPI counters ----
+function animateNum(el){
+  const to=parseFloat(el.dataset.to), pre=el.dataset.pre||'', suf=el.dataset.suf||'';
+  const dec=(to%1!==0)?1:0; let start=null, dur=1400;
+  function step(t){ if(!start)start=t; const p=Math.min((t-start)/dur,1);
+    const ease=1-Math.pow(1-p,3); const v=(to*ease).toFixed(dec);
+    el.textContent=pre+v+suf; if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+
+// ---- Sites data ----
+const sites={
+  london:[
+    {n:"Equinix LD14",op:"Equinix",m:"5-storey, detailed approval",t:"Slough"},
+    {n:"SEGRO + Pure DC JV",op:"SEGRO / Pure DC",m:"£1bn · 56MW",t:"Park Royal, W London"},
+    {n:"Vantage LHR2",op:"Vantage",m:"Opened Sep 2025 · +20MW",t:"Park Royal"},
+    {n:"London Data Centre Campus",op:"Havering scheme",m:"600MW · starts Jun 2026",t:"Havering"},
+    {n:"Equinix Hertfordshire",op:"Equinix",m:"85 acres · 250MW · £3.9bn",t:"Hertfordshire"},
+    {n:"Nscale AI Campus",op:"Nscale + Microsoft",m:"50→90MW · live Q4 2026",t:"Loughton, Essex"}
+  ],
+  manc:[
+    {n:"Kao Data KMAN-01",op:"Kao Data",m:"£350m · 40MW · ~4,000 racks · completes 2026",t:"Stockport"},
+    {n:"Blackstone AI Campus",op:"Blackstone",m:"£10bn AI campus",t:"Blyth, NE"}
+  ],
+  wales:[
+    {n:"Microsoft Imperial Park",op:"Microsoft",m:"40 acres · 750k sq ft data halls",t:"Newport"},
+    {n:"Vantage CWL (ex-NGD)",op:"Vantage",m:"Largest DC campus in Europe",t:"Newport"},
+    {n:"Vantage Bridgend",op:"Vantage",m:"Former Ford plant · ~4× Newport",t:"Bridgend"}
+  ]
+};
+function renderSites(hub){
+  document.getElementById('siteCards').innerHTML=sites[hub].map(s=>
+    `<div class="site"><h4>${s.n}</h4><div class="op">${s.op}</div>
+     <div class="meta">${s.m}</div><span class="tag">📍 ${s.t}</span></div>`).join('');
+}
+document.querySelectorAll('#siteTabs .tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('#siteTabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); renderSites(t.dataset.hub);
+});
+
+// ---- Prospects data ----
+const P=[
+  ["A","NG Bailey","Terry","O'***r","Procurement Manager","procurement"],
+  ["A","NG Bailey","Rob","Ev***s","Procurement Manager","procurement"],
+  ["A","NG Bailey","Heidi","Ro***e","Procurement Manager","procurement"],
+  ["A","NG Bailey","Paul","Ha***l","Plant Manager","plant"],
+  ["A","NG Bailey","David","Mi***s","Pre-Construction Director","pre-con"],
+  ["A","NG Bailey","Sean","St***t","Group SHE Director","ehs"],
+  ["A","NG Bailey","Chris","Sa***e","Construction Director","operations"],
+  ["A","Dornan","Gareth","Cu***n","Plant Manager","plant"],
+  ["A","Dornan","Rebecca","Mi***e","Procurement Manager","procurement"],
+  ["A","Dornan","Darren","Qu***y","Pre-Construction Director","pre-con"],
+  ["A","Dornan","Jimmy","Do***n","Project Director","operations"],
+  ["A","Dornan","Tim","O'***l","Project Director","operations"],
+  ["A","Dornan","Clive","Ta***r","Project Director","operations"],
+  ["A","Mercury","Gerry","Sm***h","Project Director","operations"],
+  ["A","Mercury","Rory","Ow***s","Operations Manager","operations"],
+  ["A","Designer Group","Glenn","Do***g","Project Director","operations"],
+  ["A","Designer Group","Josh","Hu***y","Senior Buyer","procurement"],
+  ["A","Datalec (DPI)","Ketan","Mi***y","EMEA Health & Safety Director","ehs"],
+  ["A","Datalec (DPI)","Marc","Ba***y","Health & Safety Technical Director","ehs"],
+  ["A","Kirby Group","Andy","He***n","Operations Manager","operations"],
+  ["A","Kirby Group","Alex","Cu***n","Project Manager","operations"],
+  ["B","Laing O'Rourke","Emmanuel","Jo***n","Temporary Works Coordinator","temp-works"],
+  ["B","Laing O'Rourke","Nathan","Ed***n","Procurement Category Manager","procurement"],
+  ["B","Laing O'Rourke","James","Ha***s","Procurement Category Manager","procurement"],
+  ["B","Laing O'Rourke","Rob","Gr***n","Senior Procurement Category Manager","procurement"],
+  ["B","Mace","Lee","Ta***r","Supply Chain Manager","procurement"],
+  ["B","Mace","Paul","Cr***h","Supply Chain Manager","procurement"],
+  ["B","Mace","Julia","Da***e","Supply Chain Manager","procurement"],
+  ["B","Mace","Nick","Wa***e","Health and Safety Manager","ehs"],
+  ["B","Mace","Keith","Ch***s","Health and Safety Manager","ehs"],
+  ["B","Winvic","Trevor","Sw***s","Health and Safety Manager","ehs"],
+  ["B","Bouygues E&S","Ryan","Wi***n","Health and Safety Manager","ehs"],
+  ["C","Equinix","Anil","Je***i","Data Centre Manager","fm"],
+  ["C","Equinix","Peter","Ho***n","Data Centre Manager","fm"],
+  ["C","Equinix","Adam","He***p","IBX Data Centre Manager","fm"],
+  ["C","Equinix","Craig","De***y","IBX Engineering Manager UK","fm"],
+  ["C","Equinix","Gordon","So***n","Engineering Manager","fm"],
+  ["C","Vantage","Steven","Ar***r","Facilities Manager","fm"],
+  ["C","Vantage","Wes","Si***s","Facilities Manager","fm"],
+  ["C","Vantage","Dan","Wi***s","Data Centre Project Manager","fm"],
+  ["C","Ark Data Centres","Mitchell","Fa***y","Technical Facilities Manager","fm"],
+  ["C","Ark Data Centres","Neil","—","Operations Manager","fm"],
+  ["C","Kao Data","Jonathan","Ke***e","Service Operations Manager","fm"],
+  ["C","Yondr","Geoff","Ca***r","Facilities Shift Manager","fm"],
+  ["C","Yondr","Daniel","Su***n","Facilities Shift Manager","fm"]
+];
+let tierFilter="all", q="";
+function renderRows(){
+  const rows=P.filter(p=>(tierFilter==="all"||p[0]===tierFilter))
+    .filter(p=>{const s=(p[1]+p[2]+p[3]+p[4]+p[5]).toLowerCase();return s.includes(q)});
+  document.getElementById('rows').innerHTML=rows.map(p=>
+    `<tr><td><span class="ttag ${p[0]}">${p[0]}</span></td>
+     <td>${p[2]} <span class="masked">${p[3]}</span></td>
+     <td>${p[4]}</td><td>${p[1]}</td><td><span class="rtag">${p[5]}</span></td></tr>`).join('');
+  document.getElementById('count').textContent=rows.length+" of "+P.length+" contacts";
+}
+document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); tierFilter=b.dataset.tier; renderRows();
+});
+document.getElementById('search').oninput=e=>{q=e.target.value.toLowerCase();renderRows();};
+
+// ---- Outreach ----
+const OT={
+  a:{s:"Cutting M&E man-hours on data centre containment/fit-out",
+     ang:"Tier A — M&E subs · lead with labour + schedule",
+     b:`Hi {first_name},
+
+With the data centre pipeline stretching M&E labour and pushing rates up, the access method for overhead containment, busbar and cable-tray is where a lot of hours quietly disappear.
+
+LOBO is a modular, no-tools work platform — reconfigured by hand in the data hall, no scaffold crew, no booking out MEWPs per zone. Teams typically build/strike faster and free up skilled labour for the actual install.
+
+Worth a 15-minute call to see if it fits your next data centre package? Happy to bring a worked man-hour comparison for a typical data hall.
+
+{sender}`},
+  ehs:{s:"Engineered work-at-height for data hall fit-out",
+     ang:"EHS / SHEQ / Temporary Works · lead with compliance",
+     b:`Hi {first_name},
+
+Work-at-height is still the biggest cause of construction harm, and congested data halls make scaffold and MEWP access awkward to plan and sign off.
+
+LOBO is a guard-railed, modular platform that drops straight into temporary-works method statements — fully engineered, load-tested, assembled with no tools. We already support nuclear, aerospace and energy clients with the same compliance bar data centre operators expect.
+
+Could I send our RAMS/spec pack and set up a short call?
+
+{sender}`},
+  c:{s:"Maintenance access to overhead plant without disrupting the live floor",
+     ang:"Tier C — Operators · lead with safe uptime",
+     b:`Hi {first_name},
+
+Once a hall is live, getting safely to overhead cabling, CRAC/CRAH units and lighting for maintenance is a recurring headache — towers are slow, scaffold is intrusive, MEWPs don't suit a populated floor.
+
+LOBO is a modular platform that hand-assembles in tight aisles, reconfigures for different heights, and stores flat between jobs. Available to buy or rent across a portfolio.
+
+Open to a quick look at how it would work in your halls?
+
+{sender}`}
+};
+function renderOT(k){
+  const o=OT[k];
+  document.getElementById('otBody').innerHTML=
+    `<div class="ang">${o.ang}</div><p class="subj">✉️ ${o.s}</p>
+     <pre class="msg" id="msg">${o.b}</pre>
+     <button class="copy" id="copyBtn">⧉ Copy message</button>`;
+  document.getElementById('copyBtn').onclick=()=>{
+    navigator.clipboard.writeText(o.b).then(()=>{
+      const b=document.getElementById('copyBtn');b.textContent="✓ Copied";
+      setTimeout(()=>b.textContent="⧉ Copy message",1600);});
+  };
+}
+document.querySelectorAll('#otTabs .tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('#otTabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); renderOT(t.dataset.ot);
+});
+
+// ---- Reveal on scroll ----
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ---- init ----
+renderSites('london'); renderRows(); renderOT('a');
+const kio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){animateNum(e.target);kio.unobserve(e.target);}}),{threshold:.6});
+document.querySelectorAll('.kpi .num').forEach(el=>kio.observe(el));
+</script>
+</body>
+</html>
