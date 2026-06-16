@@ -1,0 +1,46 @@
+tier,company,first_name,masked_last,title,buyer_role,enrichment_status
+A,NG Bailey,Terry,O'***r,Procurement Manager,build-procurement,pending
+A,NG Bailey,Rob,Ev***s,Procurement Manager,build-procurement,pending
+A,NG Bailey,Heidi,Ro***e,Procurement Manager,build-procurement,pending
+A,NG Bailey,Paul,Ha***l,Plant Manager,plant-equipment,pending
+A,NG Bailey,David,Mi***s,Pre-Construction Director,pre-construction,pending
+A,NG Bailey,Sean,St***t,Group Safety Health & Environmental Director,ehs,pending
+A,NG Bailey,Chris,Sa***e,Construction Director,operations,pending
+A,Dornan,Gareth,Cu***n,Plant Manager,plant-equipment,pending
+A,Dornan,Rebecca,Mi***e,Procurement Manager,build-procurement,pending
+A,Dornan,Darren,Qu***y,Pre-Construction Director,pre-construction,pending
+A,Dornan,Jimmy,Do***n,Project Director,operations,pending
+A,Dornan,Tim,O'***l,Project Director,operations,pending
+A,Dornan,Clive,Ta***r,Project Director,operations,pending
+A,Mercury,Gerry,Sm***h,Project Director,operations,pending
+A,Mercury,Rory,Ow***s,Operations Manager,operations,pending
+A,Designer Group,Glenn,Do***g,Project Director,operations,pending
+A,Designer Group,Josh,Hu***y,Senior Buyer,build-procurement,pending
+A,Datalec (DPI),Ketan,Mi***y,EMEA Health & Safety Director,ehs,pending
+A,Datalec (DPI),Marc,Ba***y,Health & Safety Technical Director,ehs,pending
+A,Kirby Group,Andy,He***n,Operations Manager,operations,pending
+A,Kirby Group,Alex,Cu***n,Project Manager,operations,pending
+B,Laing O'Rourke,Emmanuel,Jo***n,Temporary Works Coordinator,temporary-works,pending
+B,Laing O'Rourke,Nathan,Ed***n,Procurement Category Manager,build-procurement,pending
+B,Laing O'Rourke,James,Ha***s,Procurement Category Manager,build-procurement,pending
+B,Laing O'Rourke,Rob,Gr***n,Senior Procurement Category Manager,build-procurement,pending
+B,Mace,Lee,Ta***r,Supply Chain Manager,build-procurement,pending
+B,Mace,Paul,Cr***h,Supply Chain Manager,build-procurement,pending
+B,Mace,Julia,Da***e,Supply Chain Manager,build-procurement,pending
+B,Mace,Nick,Wa***e,Health and Safety Manager,ehs,pending
+B,Mace,Keith,Ch***s,Health and Safety Manager,ehs,pending
+B,Winvic,Trevor,Sw***s,Health and Safety Manager,ehs,pending
+B,Bouygues E&S,Ryan,Wi***n,Health and Safety Manager,ehs,pending
+C,Equinix,Anil,Je***i,Data Centre Manager,fm-maintenance,pending
+C,Equinix,Peter,Ho***n,Data Centre Manager,fm-maintenance,pending
+C,Equinix,Adam,He***p,IBX Data Centre Manager,fm-maintenance,pending
+C,Equinix,Craig,De***y,IBX Engineering Manager UK,fm-maintenance,pending
+C,Equinix,Gordon,So***n,Engineering Manager,fm-maintenance,pending
+C,Vantage Data Centers,Steven,Ar***r,Facilities Manager,fm-maintenance,pending
+C,Vantage Data Centers,Wes,Si***s,Facilities Manager,fm-maintenance,pending
+C,Vantage Data Centers,Dan,Wi***s,Data Centre Project Manager,fm-maintenance,pending
+C,Ark Data Centres,Mitchell,Fa***y,Technical Facilities Manager,fm-maintenance,pending
+C,Ark Data Centres,Neil,,Operations Manager,fm-maintenance,pending
+C,Kao Data,Jonathan,Ke***e,Service Operations Manager,fm-maintenance,pending
+C,Yondr Group,Geoff,Ca***r,Data Centre Facilities Shift Manager,fm-maintenance,pending
+C,Yondr Group,Daniel,Su***n,Facilities Shift Manager,fm-maintenance,pending
